@@ -276,8 +276,11 @@ def _get_field_purpose(field, item_category):
         if field_type == const.FieldType.CONCEALED and field_label == "password":
             return const.PURPOSE_PASSWORD
 
-    if item_category == const.ItemType.PASSWORD:
-        if field_type == const.FieldType.CONCEALED and field_label == "password":
-            return const.PURPOSE_PASSWORD
+    if (
+        item_category == const.ItemType.PASSWORD
+        and field_type == const.FieldType.CONCEALED
+        and field_label == "password"
+    ):
+        return const.PURPOSE_PASSWORD
 
     return const.PURPOSE_NONE

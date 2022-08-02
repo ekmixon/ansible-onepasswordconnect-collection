@@ -55,7 +55,7 @@ def op_item():
         tags=TAGS,
         state=STATE
     )
-    item_spec.update(common_options())
+    item_spec |= common_options()
     return item_spec
 
 
@@ -75,7 +75,7 @@ def op_item_info():
             type="str"
         )
     )
-    item_spec.update(common_options())
+    item_spec |= common_options()
     return item_spec
 
 

@@ -29,12 +29,9 @@ def create(field_params, previous_fields=None):
     if not previous_fields:
         previous_fields = []
 
-    # The Notes field should not be editable by Ansible,
-    # and the old value is preserved if it exists
-    notes_field = _get_field_by_label(
+    if notes_field := _get_field_by_label(
         previous_fields, const.NOTES_FIELD_LABEL
-    )
-    if notes_field:
+    ):
         yield notes_field
 
     for params in field_params:
@@ -46,18 +43,17 @@ def create(field_params, previous_fields=None):
         if params.get("generate_value") == const.GENERATE_ALWAYS:
             should_generate_value = True
         elif params.get("generate_value") == const.GENERATE_ON_CREATE:
-            old_field = _get_field_by_label(
+            if old_field := _get_field_by_label(
                 previous_fields, params.get("label")
-            )
-            if not old_field:
-                should_generate_value = True
-            else:
+            ):
                 params.update({
                     "value": old_field.get("value"),
                     # Don't allow user to change the preserved value's type
                     "field_type": old_field.get("type")
                 })
 
+            else:
+                should_generate_value = True
         yield field_from_params(
             params,
             generate_field_value=should_generate_value
@@ -133,9 +129,7 @@ def flatten_fieldset(fieldset):
     flattened = {}
 
     for field in fieldset:
-        key = field.get("label")
-        if not key:
-            key = field["id"]
+        key = field.get("label") or field["id"]
         flattened[key] = field
 
     return flattened

@@ -44,8 +44,10 @@ def test_check_mode(mocker):
     item["vault"] = {"id": create_item_params["vault_id"]}
     item["id"] = "987654321"
 
-    update_params = dict(create_item_params)
-    update_params.update({"vault_id": vault_id, "name": "UPDATED Title"})
+    update_params = create_item_params | {
+        "vault_id": vault_id,
+        "name": "UPDATED Title",
+    }
 
     modified, updated_item = vault.update_item(update_params, item, mock_api, check_mode=True)
     assert modified

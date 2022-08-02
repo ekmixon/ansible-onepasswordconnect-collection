@@ -335,27 +335,27 @@ def main():
                 check_mode=module.check_mode
             )
         else:
-            if not item:
-                changed, api_response = vault.create_item(
-                    module.params,
-                    api_client,
-                    check_mode=module.check_mode
-                )
-            else:
-                changed, api_response = vault.update_item(
+            changed, api_response = (
+                vault.update_item(
                     module.params,
                     item,
                     api_client,
-                    check_mode=module.check_mode
+                    check_mode=module.check_mode,
                 )
+                if item
+                else vault.create_item(
+                    module.params, api_client, check_mode=module.check_mode
+                )
+            )
+
     except TypeError as e:
-        results.update({"msg": to_native("Invalid Item config: {err}".format(err=e))})
+        results["msg"] = to_native("Invalid Item config: {err}".format(err=e))
         module.fail_json(**results)
     except errors.Error as e:
-        results.update({"msg": to_native(e.message)})
+        results["msg"] = to_native(e.message)
         module.fail_json(**results)
 
-    results.update({"op_item": api_response, "changed": bool(changed)})
+    results |= {"op_item": api_response, "changed": bool(changed)}
     module.exit_json(**results)
 
 

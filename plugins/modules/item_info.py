@@ -211,16 +211,16 @@ def main():
         api_response = _try_get_item(api_client, item, vault)
         if field:
             field_value = _get_item_field(api_response, field)
-            result.update({"field": field_value})
+            result["field"] = field_value
         else:
             api_response["fields"] = fields.flatten_fieldset(api_response["fields"])
-            result.update({"op_item": api_response})
+            result["op_item"] = api_response
     except errors.NotFoundError:
-        result.update({"msg": "Item not found"})
+        result["msg"] = "Item not found"
     except TypeError as e:
-        result.update({"msg": to_native("Invalid Item config: {err}").format(err=e)})
+        result["msg"] = to_native("Invalid Item config: {err}").format(err=e)
     except errors.Error as e:
-        result.update({"msg": to_native(e.message)})
+        result["msg"] = to_native(e.message)
     module.exit_json(**result)
 
 
